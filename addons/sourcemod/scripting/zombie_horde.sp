@@ -180,6 +180,12 @@ public SpawnEnemy(Float:spawn[3], Enemy:enemy_type)
                 SpawnSkeletonKing(spawn);
             case Ghost:
                 SpawnGhost(spawn);
+            case Hatman:
+                SpawnHatman(spawn);
+            case Eyeboss:
+                SpawnEyeboss(spawn);
+            case Merasmus:
+                SpawnMerasmus(spawn);
         }
     }
 }
