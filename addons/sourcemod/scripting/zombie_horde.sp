@@ -37,6 +37,7 @@ new Handle:g_Cvar_ZmbTeam = INVALID_HANDLE;
 new Handle:g_Cvar_ZmbHealth = INVALID_HANDLE;
 new Handle:g_Cvar_ZmbDamage = INVALID_HANDLE;
 
+new bool:g_NavMeshParsed = false;
 new g_SpawnPoints[MAX_SPAWN_POINTS];
 new g_SpawnPointsCount = 0;
 new g_NextSpawnPoint = 0;
@@ -66,7 +67,30 @@ public OnPluginStart()
 
 public OnMapStart()
 {
+    //TODO: check if cvar is set?
+    g_NavMeshParsed = ParseNavMesh()
     
+}
+
+bool:ParseNavMesh()
+{
+    //Parse the nav-mesh
+    if(EC_Nav_Load())
+    {
+        //Cache positions in nav-mesh
+        if(EC_Nav_CachePositions())
+        {
+            return true;
+        }else
+        {
+            //TODO: Error, unable to cache positons
+            return false;
+        }
+    }else
+    {
+        //TODO: Nav-mesh was not found
+        return false;
+    }
 }
 
 public Action:Command_Test(client, args){
@@ -156,7 +180,7 @@ public ClearZombie()
 
 public bool:IsModeEnabled()
 {
-    return GetConVarBool(g_Cvar_ZmbEnabled);
+    return GetConVarBool(g_Cvar_ZmbEnabled) && g_NavMeshParsed;
 }
 
 public Action:Event_PlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
