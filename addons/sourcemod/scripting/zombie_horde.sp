@@ -15,6 +15,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <tf2>
+#include <entcontrol>
 
 #define PLUGIN_VERSION 0.1
 
