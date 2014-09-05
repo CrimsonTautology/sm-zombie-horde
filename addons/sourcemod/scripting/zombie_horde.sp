@@ -169,9 +169,12 @@ public SpawnZombieAtNextPoint()
 {
     //new Float:spawn[3]={-1444.356323, 6.377807, 579.346191};
     new Float:spawn[3];
-    FindSpawnPoints();
-    GetEntPropVector(NextSpawnPoint(), Prop_Send, "m_vecOrigin", spawn);
-    SpawnZombie(spawn);
+    if(EC_Nav_GetNextHidingSpot(spawn))
+    {
+        SpawnZombie(spawn);
+    }else{
+        //TODO:  Unable to find hiding spot
+    }
 }
 
 public ClearZombie()
