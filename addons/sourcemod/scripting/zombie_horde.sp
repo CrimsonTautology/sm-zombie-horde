@@ -38,9 +38,6 @@ new Handle:g_Cvar_ZmbTeam = INVALID_HANDLE;
 //new Handle:g_Cvar_ZmbDamage = INVALID_HANDLE;
 
 new bool:g_NavMeshParsed = false;
-new g_SpawnPoints[MAX_SPAWN_POINTS];
-new g_SpawnPointsCount = 0;
-new g_NextSpawnPoint = 0;
 
 new Float:g_DifficultyCoefficent = 10.0;
 new g_MaxStages = 6;
@@ -97,89 +94,6 @@ public Action:Command_Test(client, args){
     test();
 }
 
-public FindSpawnPoints()
-{
-    new entity;
-    g_SpawnPointsCount = 0;
-
-    while (((entity = FindEntityByClassname(entity, "info_player_teamspawn")) > 0) && g_SpawnPointsCount < MAX_SPAWN_POINTS)
-    {
-        if(IsValidZombieSpawn(entity)){
-            g_SpawnPoints[g_SpawnPointsCount] = entity;
-            g_SpawnPointsCount++;
-        }
-    }
-}
-
-public bool:IsValidZombieSpawn(entity)
-{
-    return !GetEntProp(entity, Prop_Data, "m_bDisabled") && GetEntProp(entity, Prop_Data, "m_iTeamNum") == 3;
-}
-
-public NextSpawnPoint()
-{
-    if (g_SpawnPointsCount == 0) return -1;
-
-    g_NextSpawnPoint = (g_NextSpawnPoint + 1) % g_SpawnPointsCount;
-    return g_SpawnPoints[g_NextSpawnPoint];
-}
-
-public SpawnZombie(Float:spawn[3])
-{
-    if(GetEntityCount() >= GetMaxEntities() - ENTITY_BUFFER)
-    {
-        LogError("[ZMB] Maxed out entities");
-    }else
-    {
-        new zombie = CreateEntityByName("tf_zombie");
-        if(IsValidEntity(zombie))
-        {
-            DispatchSpawn(zombie);
-            spawn[2] -= 10.0;
-            TeleportEntity(zombie, spawn, NULL_VECTOR, NULL_VECTOR);
-        }
-    }
-}
-
-public Float:CalculateNextZombieSpawn()
-{
-    new Float:stage_difficulty = ((g_MaxStages - g_CurrentStage) / (g_MaxStages * 1.0));
-    new Float:player_difficulty = ((32.0 - GetClientCount(true)) / 32.0);
-    new Float:calc = g_DifficultyCoefficent * stage_difficulty * player_difficulty;
-
-    return (calc > 0.25) ? calc : 0.25; //We don't have a max() function
-}
-
-public Action:ZombieTimer(Handle:timer)
-{
-    if(IsModeEnabled())
-    {
-        SpawnZombieAtNextPoint();
-        CreateTimer(CalculateNextZombieSpawn(), ZombieTimer);
-    }
-}
-
-public SpawnZombieAtNextPoint()
-{
-    //new Float:spawn[3]={-1444.356323, 6.377807, 579.346191};
-    new Float:spawn[3];
-    if(EC_Nav_GetNextHidingSpot(spawn))
-    {
-        SpawnZombie(spawn);
-    }else{
-        //TODO:  Unable to find hiding spot
-    }
-}
-
-public ClearZombie()
-{
-}
-
-public bool:IsModeEnabled()
-{
-    return GetConVarBool(g_Cvar_ZmbEnabled) && g_NavMeshParsed;
-}
-
 public Action:Event_PlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
 {
     //Block players from joining the zombie team if the mode is enabled
@@ -224,6 +138,62 @@ public Action:Event_TeamplayRoundStart(Handle:event, const String:name[], bool:d
     g_CurrentStage = 0;
     CreateTimer(CalculateNextZombieSpawn(), ZombieTimer);
     return Plugin_Continue;
+}
+
+public Action:ZombieTimer(Handle:timer)
+{
+    if(IsModeEnabled())
+    {
+        SpawnZombieAtNextPoint();
+        CreateTimer(CalculateNextZombieSpawn(), ZombieTimer);
+    }
+}
+
+public SpawnZombie(Float:spawn[3])
+{
+    if(GetEntityCount() >= GetMaxEntities() - ENTITY_BUFFER)
+    {
+        LogError("[ZMB] Maxed out entities");
+    }else
+    {
+        new zombie = CreateEntityByName("tf_zombie");
+        if(IsValidEntity(zombie))
+        {
+            DispatchSpawn(zombie);
+            spawn[2] -= 10.0;
+            TeleportEntity(zombie, spawn, NULL_VECTOR, NULL_VECTOR);
+        }
+    }
+}
+
+public Float:CalculateNextZombieSpawn()
+{
+    new Float:stage_difficulty = ((g_MaxStages - g_CurrentStage) / (g_MaxStages * 1.0));
+    new Float:player_difficulty = ((32.0 - GetClientCount(true)) / 32.0);
+    new Float:calc = g_DifficultyCoefficent * stage_difficulty * player_difficulty;
+
+    return (calc > 0.25) ? calc : 0.25; //We don't have a max() function
+}
+
+public SpawnZombieAtNextPoint()
+{
+    //new Float:spawn[3]={-1444.356323, 6.377807, 579.346191};
+    new Float:spawn[3];
+    if(EC_Nav_GetNextHidingSpot(spawn))
+    {
+        SpawnZombie(spawn);
+    }else{
+        //TODO:  Unable to find hiding spot
+    }
+}
+
+public ClearZombie()
+{
+}
+
+public bool:IsModeEnabled()
+{
+    return GetConVarBool(g_Cvar_ZmbEnabled) && g_NavMeshParsed;
 }
 
 public test()
