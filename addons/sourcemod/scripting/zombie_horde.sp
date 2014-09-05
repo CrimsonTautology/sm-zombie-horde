@@ -297,7 +297,7 @@ public Float:CalculateNextEnemySpawn()
 
 public Enemy:CalculateNextEnemyType()
 {
-    roll = GetRandomInt(0, 1000);
+    new roll = GetRandomInt(0, 1000);
     if(roll >= 999)
         return Hatman;
     if(roll >= 998)
@@ -316,7 +316,6 @@ public Enemy:CalculateNextEnemyType()
 
 public SpawnEnemyAtNextPoint()
 {
-    //new Float:spawn[3]={-1444.356323, 6.377807, 579.346191};
     new Float:spawn[3];
     if(EC_Nav_GetNextHidingSpot(spawn))
     {
