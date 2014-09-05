@@ -43,6 +43,17 @@ new Float:g_DifficultyCoefficent = 10.0;
 new g_MaxStages = 6;
 new g_CurrentStage = 0;
 
+enum Enemy
+{
+    Skeleton = 0,
+    SkeletonBaby,
+    SkeletonKing,
+    Ghost,
+    HeadlessHorseman,
+    Monoculous,
+    Merasmus
+}
+
 public OnPluginStart()
 {
 
@@ -66,7 +77,7 @@ public OnMapStart()
 {
     //TODO: check if cvar is set?
     g_NavMeshParsed = ParseNavMesh();
-    
+
 }
 
 bool:ParseNavMesh()
@@ -149,20 +160,73 @@ public Action:EnemyTimer(Handle:timer)
     }
 }
 
-public SpawnEnemy(Float:spawn[3])
+public SpawnEnemy(Float:spawn[3], Enemy:enemy_type)
 {
     if(GetEntityCount() >= GetMaxEntities() - ENTITY_BUFFER)
     {
         LogError("[ZMB] Maxed out entities");
     }else
     {
-        new zombie = CreateEntityByName("tf_zombie");
-        if(IsValidEntity(zombie))
+        switch(enemy_type)
         {
-            DispatchSpawn(zombie);
-            spawn[2] -= 10.0;
-            TeleportEntity(zombie, spawn, NULL_VECTOR, NULL_VECTOR);
+            case Skeleton:
+                SpawnSkeleton(spawn);
+            case SkeletonBaby:
+                SpawnSkeletonBaby(spawn);
+            case SkeletonBabyKing:
+                SpawnSkeletonKing(spawn);
+            case Ghost:
+                SpawnGhost(spawn);
         }
+    }
+}
+
+SpawnSkeleton(Float:spawn[3])
+{
+    new entity = CreateEntityByName("tf_zombie");
+    if(IsValidEntity(entity))
+    {
+        DispatchSpawn(entity);
+        SetEntProp(entity, Prop_Send, "m_iTeamNum", GetConVarInt(g_Cvar_ZmbTeam));
+        //SetEntPropFloat(entity, Prop_Send, "m_flModelScale", scale);
+        //SetEntProp(entity, Prop_Send, "m_iTeamNum", team);
+        //DispatchKeyValue(entity, "skin", skin);
+        //SetEntProp(entity, Prop_Send, "m_bGlowEnabled", 1);
+        //SetEntProp(entity, Prop_Data, "m_nSkeletonType", 1);
+
+        spawn[2] -= 10.0;
+        TeleportEntity(entity, spawn, NULL_VECTOR, NULL_VECTOR);
+    }
+}
+
+
+SpawnSkeletonBaby(Float:spawn[3])
+{
+}
+
+SpawnSkeletonKing(Float:spawn[3])
+{
+    new entity = CreateEntityByName("tf_zombie");
+    if(IsValidEntity(entity))
+    {
+        DispatchSpawn(entity);
+        SetEntProp(entity, Prop_Send, "m_iTeamNum", GetConVarInt(g_Cvar_ZmbTeam));
+        SetEntProp(entity, Prop_Data, "m_nSkeletonType", 1);
+
+        spawn[2] -= 10.0;
+        TeleportEntity(entity, spawn, NULL_VECTOR, NULL_VECTOR);
+    }
+}
+
+SpawnGhost(Float:spawn[3])
+{
+    new entity = CreateEntityByName("ghost");
+    if(IsValidEntity(entity))
+    {
+        DispatchSpawn(entity);
+
+        spawn[2] -= 10.0;
+        TeleportEntity(entity, spawn, NULL_VECTOR, NULL_VECTOR);
     }
 }
 
@@ -175,13 +239,19 @@ public Float:CalculateNextEnemySpawn()
     return (calc > 0.25) ? calc : 0.25; //We don't have a max() function
 }
 
+public Enemy:CalculateNextEnemyType()
+{
+    return Skeleton;
+}
+
 public SpawnEnemyAtNextPoint()
 {
     //new Float:spawn[3]={-1444.356323, 6.377807, 579.346191};
     new Float:spawn[3];
     if(EC_Nav_GetNextHidingSpot(spawn))
     {
-        SpawnEnemy(spawn);
+        enemy_type = CalculateNextEnemyType();
+        SpawnEnemy(spawn, enemy_type);
     }else{
         //TODO:  Unable to find hiding spot
     }
