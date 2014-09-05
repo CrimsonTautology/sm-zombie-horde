@@ -23,7 +23,7 @@ public Plugin:myinfo =
     name = "TF2 Zombie Horde",
     author = "CrimsonTautology",
     description = "Fight off the zombie horde",
-    url = ""
+    url = "https://github.com/CrimsonTautology/sm_zombie_horde"
 }
 
 
