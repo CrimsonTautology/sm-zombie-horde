@@ -34,8 +34,8 @@ public Plugin:myinfo =
 
 new Handle:g_Cvar_ZmbEnabled = INVALID_HANDLE;
 new Handle:g_Cvar_ZmbTeam = INVALID_HANDLE;
-new Handle:g_Cvar_ZmbHealth = INVALID_HANDLE;
-new Handle:g_Cvar_ZmbDamage = INVALID_HANDLE;
+//new Handle:g_Cvar_ZmbHealth = INVALID_HANDLE;
+//new Handle:g_Cvar_ZmbDamage = INVALID_HANDLE;
 
 new bool:g_NavMeshParsed = false;
 new g_SpawnPoints[MAX_SPAWN_POINTS];
@@ -68,7 +68,7 @@ public OnPluginStart()
 public OnMapStart()
 {
     //TODO: check if cvar is set?
-    g_NavMeshParsed = ParseNavMesh()
+    g_NavMeshParsed = ParseNavMesh();
     
 }
 
@@ -147,13 +147,7 @@ public Float:CalculateNextZombieSpawn()
     new Float:player_difficulty = ((32.0 - GetClientCount(true)) / 32.0);
     new Float:calc = g_DifficultyCoefficent * stage_difficulty * player_difficulty;
 
-    if (calc > 0.25)
-    {
-        return calc;
-    }else{
-        return 0.25;
-    }
-
+    return (calc > 0.25) ? calc : 0.25; //We don't have a max() function
 }
 
 public Action:ZombieTimer(Handle:timer)
