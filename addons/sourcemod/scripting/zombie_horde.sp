@@ -136,20 +136,20 @@ public Action:Event_TeamplayRoundStart(Handle:event, const String:name[], bool:d
         return Plugin_Continue;
 
     g_CurrentStage = 0;
-    CreateTimer(CalculateNextZombieSpawn(), ZombieTimer);
+    CreateTimer(CalculateNextEnemySpawn(), EnemyTimer);
     return Plugin_Continue;
 }
 
-public Action:ZombieTimer(Handle:timer)
+public Action:EnemyTimer(Handle:timer)
 {
     if(IsModeEnabled())
     {
-        SpawnZombieAtNextPoint();
-        CreateTimer(CalculateNextZombieSpawn(), ZombieTimer);
+        SpawnEnemyAtNextPoint();
+        CreateTimer(CalculateNextEnemySpawn(), EnemyTimer);
     }
 }
 
-public SpawnZombie(Float:spawn[3])
+public SpawnEnemy(Float:spawn[3])
 {
     if(GetEntityCount() >= GetMaxEntities() - ENTITY_BUFFER)
     {
@@ -166,7 +166,7 @@ public SpawnZombie(Float:spawn[3])
     }
 }
 
-public Float:CalculateNextZombieSpawn()
+public Float:CalculateNextEnemySpawn()
 {
     new Float:stage_difficulty = ((g_MaxStages - g_CurrentStage) / (g_MaxStages * 1.0));
     new Float:player_difficulty = ((32.0 - GetClientCount(true)) / 32.0);
@@ -175,19 +175,19 @@ public Float:CalculateNextZombieSpawn()
     return (calc > 0.25) ? calc : 0.25; //We don't have a max() function
 }
 
-public SpawnZombieAtNextPoint()
+public SpawnEnemyAtNextPoint()
 {
     //new Float:spawn[3]={-1444.356323, 6.377807, 579.346191};
     new Float:spawn[3];
     if(EC_Nav_GetNextHidingSpot(spawn))
     {
-        SpawnZombie(spawn);
+        SpawnEnemy(spawn);
     }else{
         //TODO:  Unable to find hiding spot
     }
 }
 
-public ClearZombie()
+public ClearEnemy()
 {
 }
 
@@ -198,5 +198,5 @@ public bool:IsModeEnabled()
 
 public test()
 {
-    SpawnZombieAtNextPoint();
+    SpawnEnemyAtNextPoint();
 }
