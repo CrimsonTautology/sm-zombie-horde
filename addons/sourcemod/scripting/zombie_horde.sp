@@ -49,8 +49,8 @@ enum Enemy
     SkeletonBaby,
     SkeletonKing,
     Ghost,
-    HeadlessHorseman,
-    Monoculous,
+    Hatman,
+    Eyeboss,
     Merasmus
 }
 
@@ -68,6 +68,9 @@ public OnPluginStart()
     HookEvent("teamplay_round_win", Event_TeamplayRoundWin);
     HookEvent("teamplay_game_over", Event_TeamplayGameOver);
     HookEvent("teamplay_round_start", Event_TeamplayRoundStart);
+    //pumpkin_lord_killed
+    //eyeball_boss_killed
+    //merasmus_killed
 
     RegConsoleCmd("sm_test123", Command_Test);
 
@@ -202,6 +205,16 @@ SpawnSkeleton(Float:spawn[3])
 
 SpawnSkeletonBaby(Float:spawn[3])
 {
+    new entity = CreateEntityByName("tf_zombie");
+    if(IsValidEntity(entity))
+    {
+        DispatchSpawn(entity);
+        SetEntProp(entity, Prop_Send, "m_iTeamNum", GetConVarInt(g_Cvar_ZmbTeam));
+        SetEntProp(entity, Prop_Data, "m_nSkeletonType", 2);
+
+        spawn[2] -= 10.0;
+        TeleportEntity(entity, spawn, NULL_VECTOR, NULL_VECTOR);
+    }
 }
 
 SpawnSkeletonKing(Float:spawn[3])
@@ -221,6 +234,42 @@ SpawnSkeletonKing(Float:spawn[3])
 SpawnGhost(Float:spawn[3])
 {
     new entity = CreateEntityByName("ghost");
+    if(IsValidEntity(entity))
+    {
+        DispatchSpawn(entity);
+
+        spawn[2] -= 10.0;
+        TeleportEntity(entity, spawn, NULL_VECTOR, NULL_VECTOR);
+    }
+}
+
+SpawnHatman(Float:spawn[3])
+{
+    new entity = CreateEntityByName("headless_hatman");
+    if(IsValidEntity(entity))
+    {
+        DispatchSpawn(entity);
+
+        spawn[2] -= 10.0;
+        TeleportEntity(entity, spawn, NULL_VECTOR, NULL_VECTOR);
+    }
+}
+
+SpawnEyeboss(Float:spawn[3])
+{
+    new entity = CreateEntityByName("eyeball_boss");
+    if(IsValidEntity(entity))
+    {
+        DispatchSpawn(entity);
+
+        spawn[2] -= 10.0;
+        TeleportEntity(entity, spawn, NULL_VECTOR, NULL_VECTOR);
+    }
+}
+
+SpawnMerasmus(Float:spawn[3])
+{
+    new entity = CreateEntityByName("merasmus");
     if(IsValidEntity(entity))
     {
         DispatchSpawn(entity);
@@ -250,7 +299,7 @@ public SpawnEnemyAtNextPoint()
     new Float:spawn[3];
     if(EC_Nav_GetNextHidingSpot(spawn))
     {
-        enemy_type = CalculateNextEnemyType();
+        decl enemy_type = CalculateNextEnemyType();
         SpawnEnemy(spawn, enemy_type);
     }else{
         //TODO:  Unable to find hiding spot
