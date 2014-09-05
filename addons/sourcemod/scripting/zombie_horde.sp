@@ -176,7 +176,7 @@ public SpawnEnemy(Float:spawn[3], Enemy:enemy_type)
                 SpawnSkeleton(spawn);
             case SkeletonBaby:
                 SpawnSkeletonBaby(spawn);
-            case SkeletonBabyKing:
+            case SkeletonKing:
                 SpawnSkeletonKing(spawn);
             case Ghost:
                 SpawnGhost(spawn);
@@ -299,7 +299,7 @@ public SpawnEnemyAtNextPoint()
     new Float:spawn[3];
     if(EC_Nav_GetNextHidingSpot(spawn))
     {
-        decl enemy_type = CalculateNextEnemyType();
+        new Enemy:enemy_type = CalculateNextEnemyType();
         SpawnEnemy(spawn, enemy_type);
     }else{
         //TODO:  Unable to find hiding spot
