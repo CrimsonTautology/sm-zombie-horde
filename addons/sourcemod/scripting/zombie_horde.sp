@@ -267,6 +267,7 @@ SpawnEyeboss(Float:spawn[3])
     if(IsValidEntity(entity))
     {
         DispatchSpawn(entity);
+        SetEntProp(entity, Prop_Send, "m_iTeamNum", 5);
 
         spawn[2] -= 10.0;
         TeleportEntity(entity, spawn, NULL_VECTOR, NULL_VECTOR);
@@ -296,7 +297,21 @@ public Float:CalculateNextEnemySpawn()
 
 public Enemy:CalculateNextEnemyType()
 {
-    return Skeleton;
+    roll = GetRandomInt(0, 1000);
+    if(roll >= 999)
+        return Hatman;
+    if(roll >= 998)
+        return Eyeboss;
+    if(roll >= 997)
+        return Merasmus;
+    if(roll >= 970)
+        return SkeletonKing;
+    else if(roll >= 900)
+        return SkeletonBaby;
+    else if(roll >= 800)
+        return Ghost;
+    else
+        return Skeleton;
 }
 
 public SpawnEnemyAtNextPoint()
