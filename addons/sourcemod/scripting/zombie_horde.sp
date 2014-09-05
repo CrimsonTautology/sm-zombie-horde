@@ -329,6 +329,22 @@ public SpawnEnemyAtNextPoint()
 
 public ClearEnemy()
 {
+    new entity = -1;
+
+    while((entity = FindEntityByClassname(entity, "headless_hatman")) != -1)
+        if (IsValidEntity(entity)) AcceptEntityInput(entity, "Kill");
+
+    while((entity = FindEntityByClassname(entity, "eyeball_boss")) != -1)
+        if (IsValidEntity(entity)) AcceptEntityInput(entity, "Kill");
+
+    while((entity = FindEntityByClassname(entity, "merasmus")) != -1)
+        if (IsValidEntity(entity)) AcceptEntityInput(entity, "Kill");
+
+    while((entity = FindEntityByClassname(entity, "tf_zombie")) != -1)
+        if (IsValidEntity(entity)) AcceptEntityInput(entity, "Kill");
+
+    while((entity = FindEntityByClassname(entity, "ghost")) != -1)
+        if (IsValidEntity(entity)) AcceptEntityInput(entity, "Kill");
 }
 
 public bool:IsModeEnabled()
