@@ -36,10 +36,10 @@ task :install do
   install_filetype '*.smx', PLUGINS
 
   #Install translations
-  install_filetype '*.phrases.txt', TRANSLATIONS
+  #install_filetype '*.phrases.txt', TRANSLATIONS
 
   #Install extensions if they don't exist
-  install_filetype '*.so', EXTENSIONS, false
+  #install_filetype '*.so', EXTENSIONS, false
 
   #Install default configfiles if they don't exist
   install_filetype '*.cfg', CONFIGS, false

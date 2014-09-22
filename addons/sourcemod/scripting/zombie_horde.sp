@@ -15,7 +15,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <tf2>
-#include <entcontrol>
+#include <navmesh>
 
 #define PLUGIN_VERSION 0.1
 

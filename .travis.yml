@@ -25,6 +25,7 @@ before_script:
     - chmod +x spcomp
 
 script: 
+    - ./spcomp navmesh.sp
     - ./spcomp zombie_horde.sp
 
 after_script:
